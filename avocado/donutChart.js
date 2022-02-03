@@ -59,7 +59,7 @@ var height = 360;
 var radius = Math.min(width, height) / 2;
 var donutWidth = 75;
 var color = d3.scaleOrdinal()
-    .range(["#53783b", "#b3c656", "#fce198"]);
+    .range(["#53783b", "#b3c656", "#A75D34"]);
 
 var svg = d3.select('#donut')
     .append('svg')

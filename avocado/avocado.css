@@ -1,3 +1,23 @@
+.button {
+    display: inline-block;
+    padding: 15px 25px;
+    font-size: 24px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    outline: none;
+    color: #fff;
+    background-color: #53783b;
+    border: none;
+    border-radius: 15px;
+}
+
+.button:hover {background-color: #7b964a}
+
+.button:active {
+    background-color: #3e8e41;
+    transform: translateY(4px);
+}
 
 /* Style the tab buttons */
 .tablink {
@@ -107,7 +127,7 @@ ul{list-style-type: none;}
 }
 
 .active, .dot:hover {
-    background-color: #717171;
+    background-color: white;
 }
 
 /* Fading animation */
@@ -206,7 +226,7 @@ ul{list-style-type: none;}
 }
 
 .active, .dot2:hover {
-    background-color: #717171;
+    background-color: white;
 }
 
 /* Fading animation */
@@ -398,7 +418,7 @@ ul{list-style-type: none;}
 }
 
 .active, .dot4:hover {
-    background-color: #717171;
+    background-color: white;
 }
 
 /* Fading animation */
@@ -556,8 +576,10 @@ form {
 
 svg {
     /*background: url('assets/sky.jpeg') no-repeat;*/
-    background-color: #7b964a;
+    background-color: transparent;
     position: relative;
+    margin-top: 400px;
+
 }
 
 /* Turn off parallax scrolling for tablets and phones */
