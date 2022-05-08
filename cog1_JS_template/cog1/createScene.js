@@ -17,12 +17,12 @@ function(exports, scenegraph, animation) {
 	 */
 	function init() {
 
-		//var cubeNode = scenegraph.createNodeWithModel("cube", "cube", {scale:300});
-		//cubeNode.rotateTo([1.6, -3.87, 0]);
+		var cubeNode = scenegraph.createNodeWithModel("cube", "cube", {scale:300});
+		cubeNode.rotateTo([1.6, -3.87, 0]);
 
 
         // BEGIN exercise myModel
-        var mymodelNode = scenegraph.createNodeWithModel("mymodel", "mymodel", {scale:300});
+        //var mymodelNode = scenegraph.createNodeWithModel("F117", "mymodel", {scale:300});
         // END exercise myModel
 
 		return;

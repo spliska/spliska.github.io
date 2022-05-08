@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e1f7ef25-8939-49b8-824a-ef93ef003e18" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cog1/createScene.js" beforeDir="false" afterPath="$PROJECT_DIR$/cog1/createScene.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cog1/raster.js" beforeDir="false" afterPath="$PROJECT_DIR$/cog1/raster.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../cog1_JS_template_2/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../cog1_JS_template_2/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -57,7 +59,8 @@
       <option name="presentableId" value="Default" />
       <updated>1649021430999</updated>
       <workItem from="1649021435808" duration="1655000" />
-      <workItem from="1650862196292" duration="30000" />
+      <workItem from="1650862196292" duration="339000" />
+      <workItem from="1652028883937" duration="3643000" />
     </task>
     <servers />
   </component>
@@ -69,7 +72,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>

@@ -78,87 +78,48 @@ function(exports, shader, framebuffer, data) {
 	 * @parameter [only for fill] edgeStartVertexIndex, edgeEndVertexIndex : Start and end of line segment stored in intersection for interpolation.
 	 * @parameter [only for textureing] edgeStartTextureCoord, edgeEndTextureCoord : Texture uv-vectors (not the indices) for edge currently processed.
 	 */
-	function drawLineBresenham(startX, startY, startZ, endX, endY, endZ, color, storeIntersectionForScanlineFill, edgeStartVertexIndex, edgeEndVertexIndex, edgeStartTextureCoord, edgeEndTextureCoord) {
-
+	function drawLineBresenham(x0, y0, z0, x1, y1, z1, color, storeIntersectionForScanlineFill, edgeStartVertexIndex, edgeEndVertexIndex, edgeStartTextureCoord, edgeEndTextureCoord)
+	{
 		// Let endX be larger than startX.
 		// In this way on a shared edge between polygons the same left most fragment
 		// is stored as intersection and the will never be a gap on a step of the edge.
-		if(endX < startX) {
-			return drawLineBresenham(endX, endY, endZ, startX, startY, startZ, color, storeIntersectionForScanlineFill, edgeEndVertexIndex, edgeStartVertexIndex, edgeEndTextureCoord, edgeStartTextureCoord);
+		if (x1 < x0) {
+			return drawLineBresenham(x1, y1, z1, x0, y0, z0, color, storeIntersectionForScanlineFill, edgeEndVertexIndex, edgeStartVertexIndex, edgeEndTextureCoord, edgeStartTextureCoord);
 		}
 
-		if(!storeIntersectionForScanlineFill) {
+		if (!storeIntersectionForScanlineFill) {
 			// Set rgbaShaded to rgba in case we do not apply shading.
 			vec3.set(color.rgba, color.rgbaShaded);
 			// set Alpha.
 			color.rgbaShaded[3] = color.rgba[3];
 		}
 
-		var dX = endX - startX;
-		var dY = endY - startY;
-		var dXAbs = Math.abs(dX);
-		var dYAbs = Math.abs(dY);
-
-		// Determine the direction to step.
-		var dXSign = dX >= 0 ? 1 : -1;
-		var dYSign = dY >= 0 ? 1 : -1;
-
-		// shorthands for speedup.
-		var dXAbs2 = 2 * dXAbs;
-		var dYAbs2 = 2 * dYAbs;
-		var dXdYdiff2 = 2 * (dXAbs - dYAbs);
-		var dYdXdiff2 = 2 * (dYAbs - dXAbs);
-
-		// Decision variable.
-		var e;
-		// Loop variables.
-		var x = startX;
-		var y = startY;
-		var z = startZ;
-
-		// z is linearly interpolated with delta dz in each step of the driving variable.
-		var dz;
-
-		// Prepare bi-linear interpolation for shading and textureing.
-		// Interpolated weight in interval [0,1] of the starting- and end-point of the current edge.
-		// The weight is the relative distance form the starting point.
-		// It is stored with an intersection for interpolation used for shading and textureing.
-		// The interpolation step is done in synchronous to the driving variable.
-		var interpolationWeight = 0;
-		var deltaInterpolationWeight;
-
 		// BEGIN exercise Bresenham
-		// Comment out the next two lines.
-		drawLine(startX, startY, endX, endY, color);
-		return;
 
-		// Skip it, if the line is just a point.
+		if (x0 == x1 && y0 == y1) return;
 
+		var delta_x = Math.abs(x1 - x0);
+		var delta_y = Math.abs(y1 - y0);
 
-		// Optionally draw start point as is the same
-		// as the end point of the previous edge.
-		// In any case, do not add an intersection for start point here,
-		// this should happen later in the scanline function.
+		var sx = x0 < x1 ? 1 : -1;
+		var sy = y0 < y1 ? 1 : -1;
 
+		var error = delta_x - delta_y;
 
-		// Distinction of cases for driving variable.
-
-			// x is driving variable.
-
-						// Do not add intersections for points on horizontal line
-						// and not the end point, which is done in scanline.
-
-					//framebuffer.set(x, y, getZ(x, y), color);
-
-			// y is driving variable.
-
-					// Add every intersection as there can be only one per scan line.
-					// but not the end point, which is done in scanline.
-
-						//framebuffer.set(x, y, getZ(x, y), color);
-		
-		// END exercise Bresenham		
-	};
+		while (true) {
+			framebuffer.set(x0, y0, getZ(x0, y0), color);
+			if (x0 === x1 && y0 === y1) break;
+			var e2 = 2 * error;
+			if (e2 > -delta_y) {
+				error -= delta_y;
+				x0 += sx;
+			}
+			if (e2 < delta_x) {
+				error += delta_x;
+				y0 += sy;
+			}
+		}
+	}
 
 	/**
 	 * Draw edges of given polygon. See also scanlineFillPolygon().

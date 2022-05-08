@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e1f7ef25-8939-49b8-824a-ef93ef003e18" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../cog1_JS_template/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../cog1_JS_template/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../cog1_JS_template/cog1/createScene.js" beforeDir="false" afterPath="$PROJECT_DIR$/../cog1_JS_template/cog1/createScene.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -60,6 +61,7 @@
       <workItem from="1650829575037" duration="4112000" />
       <workItem from="1650850084390" duration="8949000" />
       <workItem from="1650862063382" duration="105000" />
+      <workItem from="1652028846727" duration="36000" />
     </task>
     <servers />
   </component>
@@ -71,7 +73,9 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
           </value>
         </entry>
       </map>
