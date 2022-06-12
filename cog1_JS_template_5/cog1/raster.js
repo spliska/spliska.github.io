@@ -11,7 +11,7 @@ define(["exports", "shader", "framebuffer", "data", "glMatrix"], function (
     exports,
     shader,
     framebuffer,
-    data
+    data,
 ) {
     "use strict";
 
@@ -63,19 +63,19 @@ define(["exports", "shader", "framebuffer", "data", "glMatrix"], function (
      *
      * @parameter st, end: start and end point of line segment.
      */
-    function drawLineBresenhamGivenStartEndPoint(start, end, color) {
+    function drawLineBresenhamGivenStartEndPoint(st, end, color) {
         // Convert parameters to integer values.
         // Use (not not ~~) instead of Math.floor() for integer cast and rounding of X-Y values.
         // Leave Z as floating point for comparisons in z-buffer.
         drawLineBresenham(
-            ~~start[0],
-            ~~start[1],
-            start[2],
+            ~~st[0],
+            ~~st[1],
+            st[2],
             ~~end[0],
             ~~end[1],
             end[2],
             color,
-            false
+            false,
         );
     }
 
@@ -92,36 +92,36 @@ define(["exports", "shader", "framebuffer", "data", "glMatrix"], function (
      * @parameter [only for textureing] edgeStartTextureCoord, edgeEndTextureCoord : Texture uv-vectors (not the indices) for edge currently processed.
      */
     function drawLineBresenham(
-        x0,
-        y0,
-        z0,
-        x1,
-        y1,
-        z1,
+        startX,
+        startY,
+        startZ,
+        endX,
+        endY,
+        endZ,
         color,
         storeIntersectionForScanlineFill,
         edgeStartVertexIndex,
         edgeEndVertexIndex,
         edgeStartTextureCoord,
-        edgeEndTextureCoord
+        edgeEndTextureCoord,
     ) {
         // Let endX be larger than startX.
         // In this way on a shared edge between polygons the same left most fragment
         // is stored as intersection and the will never be a gap on a step of the edge.
-        if (x1 < x0) {
+        if (endX < startX) {
             return drawLineBresenham(
-                x1,
-                y1,
-                z1,
-                x0,
-                y0,
-                z0,
+                endX,
+                endY,
+                endZ,
+                startX,
+                startY,
+                startZ,
                 color,
                 storeIntersectionForScanlineFill,
                 edgeEndVertexIndex,
                 edgeStartVertexIndex,
                 edgeEndTextureCoord,
-                edgeStartTextureCoord
+                edgeStartTextureCoord,
             );
         }
 
@@ -132,30 +132,31 @@ define(["exports", "shader", "framebuffer", "data", "glMatrix"], function (
             color.rgbaShaded[3] = color.rgba[3];
         }
 
-        const deltaX = x1 - x0;
-        const deltaY = y1 - y0;
-        const deltaXabs = Math.abs(deltaX);
-        const deltaYabs = Math.abs(deltaY);
+        const dX = endX - startX;
+        const dY = endY - startY;
+        const dXAbs = Math.abs(dX);
+        const dYAbs = Math.abs(dY);
 
         // Determine the direction to step.
-        const deltaXsign = deltaX >= 0 ? 1 : -1;
-        const deltaYsign = deltaY >= 0 ? 1 : -1;
+        const dXSign = dX >= 0 ? 1 : -1;
+        const dYSign = dY >= 0 ? 1 : -1;
 
         // shorthands for speedup.
-        const deltaXabs2 = 2 * deltaXabs;
-        const deltaYabs2 = 2 * deltaYabs;
-        const deltaXdeltaYdiff2 = 2 * (deltaXabs - deltaYabs);
-        const deltaYdeltaXdiff2 = 2 * (deltaYabs - deltaXabs);
+        const dXAbs2 = 2 * dXAbs;
+        const dYAbs2 = 2 * dYAbs;
+        const dXdYdiff2 = 2 * (dXAbs - dYAbs);
+        const dYdXdiff2 = 2 * (dYAbs - dXAbs);
 
         // Decision variable.
         let e;
         // Loop variables.
-        let x = x0;
-        let y = y0;
-        const z = z0;
+        let x = startX;
+        let y = startY;
+        const z = startZ;
 
         // z is linearly interpolated with delta dz in each step of the driving variable.
         let dz;
+        let currentZ = startZ;
 
         // Prepare bi-linear interpolation for shading and textureing.
         // Interpolated weight in interval [0,1] of the starting- and end-point of the current edge.
@@ -165,14 +166,11 @@ define(["exports", "shader", "framebuffer", "data", "glMatrix"], function (
         const interpolationWeight = 0;
         let deltaInterpolationWeight;
 
-        // BEGIN exercise Bresenham
-        // Comment out the next two lines.
-        //drawLine(startX, startY, endX, endY, color);
-        //return;
+        //#region BEGIN exercise Bresenham
 
         // Skip it, if the line is just a point.
-        if (x0 === x1 && y0 === y1) {
-            framebuffer.set(x0, y0, z0, color);
+        if (startX === endX && startY === endY) {
+            framebuffer.set(x, y, startZ, color);
             return;
         }
 
@@ -180,72 +178,78 @@ define(["exports", "shader", "framebuffer", "data", "glMatrix"], function (
         // as the end point of the previous edge.
         // In any case, do not add an intersection for start point here,
         // this should happen later in the scanline function.
-        framebuffer.set(x, y, getZ(x, y), color);
+
+        framebuffer.set(x, y, startZ, color);
 
         // Distinction of cases for driving variable.
-        if (deltaXabs >= deltaYabs) {
+        if (dXAbs >= dYAbs) {
+            dz = endZ - startZ / Math.abs(endX - startX);
             // x is driving variable.
-            let previousY = y - deltaYsign;
-            e = deltaXabs - deltaYabs2;
-            while (x !== x1) {
-                x += deltaXsign;
+            let previousY = y - dYSign;
+            e = dXAbs - dYAbs2;
+            while (x !== endX) {
+                x += dXSign;
                 if (e > 0) {
-                    e = e - deltaYabs2;
+                    e = e - dYAbs2;
                 } else {
-                    y += deltaYsign;
-                    e += deltaXdeltaYdiff2;
+                    y += dYSign;
+                    e += dXdYdiff2;
                 }
                 // Do not add intersections for points on horizontal line
                 // and not the end point, which is done in scanline.
                 if (
-                    y0 !== y1 &&
-                    x !== x1 &&
+                    startY !== endY &&
+                    x !== endX &&
                     y !== previousY &&
-                    y !== y0 &&
-                    y !== y1
+                    y !== startY &&
+                    y !== endY
                 ) {
                     addIntersection(
                         x,
                         y,
-                        getZ(x, y),
+                        currentZ,
                         interpolationWeight,
                         edgeStartVertexIndex,
                         edgeEndVertexIndex,
                         edgeStartTextureCoord,
-                        edgeEndTextureCoord
+                        edgeEndTextureCoord,
                     );
                 }
-                framebuffer.set(x, y, getZ(x, y), color);
+                framebuffer.set(x, y, currentZ, color);
+
                 previousY = y;
+                currentZ += dz;
             }
         } else {
             // y is driving variable.
-            e = deltaYabs - deltaXabs2;
-            while (y !== y1) {
-                y += deltaYsign;
+            dz = endZ - startZ / Math.abs(endY - startY);
+            e = dYAbs - dXAbs2;
+            while (y !== endY) {
+                y += dYSign;
                 if (e > 0) {
-                    e = e - deltaXabs2;
+                    e = e - dXAbs2;
                 } else {
-                    x += deltaXsign;
-                    e += deltaYdeltaXdiff2;
+                    x += dXSign;
+                    e += dYdXdiff2;
                 }
 
-                framebuffer.set(x, y, getZ(x, y), color);
-                if (y !== y1) {
+                if (y !== endY) {
                     addIntersection(
                         x,
                         y,
-                        getZ(x, y),
+                        currentZ,
                         interpolationWeight,
                         edgeStartVertexIndex,
                         edgeEndVertexIndex,
                         edgeStartTextureCoord,
-                        edgeEndTextureCoord
+                        edgeEndTextureCoord,
                     );
                 }
+                framebuffer.set(x, y, currentZ, color);
+                currentZ += dz;
             }
         }
-        // END exercise Bresenham
+        //#endregion END exercise Bresenham
     }
 
     /**
@@ -261,12 +265,12 @@ define(["exports", "shader", "framebuffer", "data", "glMatrix"], function (
         // Loop over vertices/edges in polygon.
         for (let v = 0; v < polygon.length; v++) {
             // Determine start st and end point end of edge.
-            const start = vertices[polygon[v]];
+            const st = vertices[polygon[v]];
             // Connect edge to next or to first vertex to close the polygon.
             const nextVertexIndex = v < polygon.length - 1 ? v + 1 : 0;
             const end = vertices[polygon[nextVertexIndex]];
 
-            drawLineBresenhamGivenStartEndPoint(start, end, color);
+            drawLineBresenhamGivenStartEndPoint(st, end, color);
         }
     }
 
@@ -276,26 +280,17 @@ define(["exports", "shader", "framebuffer", "data", "glMatrix"], function (
         color,
         textureCoord,
         polygonTextureCoord,
-        texture
+        texture,
     ) {
         // Use Math.floor() for integer cast and rounding of X-Y values.
         // Leave Z as floating point for comparisons in z-buffer.
-        let currentX, currentY, currentZ, nextX, nextY, nextZ;
+        let currX, currY, currZ, nextX, nextY, nextZ;
         let startPoint,
             endPoint;
         const lastIndex = 0;
 
         // Clear data-structure for scanline segments.
         clearIntersections();
-
-        // Calculate the plane in which the polygon lies
-        // to determine z-values of intermediate points.
-        // Maybe skip polygons that are perpendicular to the screen / xy-plane.
-        // The plane calculation can be commented out if bi-linear interpolation is applied.
-        if (!calcPlaneEquation(vertices, polygon)) {
-            //console.log("Skip plane(polygon) is perpendicular to the screen / xy-plane, color: " + color.name);
-            return;
-        }
 
         // Sign (+-1) of derivative of edge.
         let derivative = undefined;
@@ -312,7 +307,7 @@ define(["exports", "shader", "framebuffer", "data", "glMatrix"], function (
             ) {
                 lastDerivative = calcDerivative(
                     vertices[polygon[v]],
-                    vertices[polygon[v - 1]]
+                    vertices[polygon[v - 1]],
                 );
                 break;
             }
@@ -326,7 +321,7 @@ define(["exports", "shader", "framebuffer", "data", "glMatrix"], function (
         // Loop over vertices/edges in polygon.
         for (let v = 0; v < polygon.length; v++) {
             // Determine start and end point of edge.
-            let start = vertices[polygon[v]];
+            let st = vertices[polygon[v]];
 
             // Connect edge to next or to first vertex to close the polygon.
             let nextVertexIndex = v < polygon.length - 1 ? v + 1 : 0;
@@ -335,35 +330,35 @@ define(["exports", "shader", "framebuffer", "data", "glMatrix"], function (
             // Convert parameters to integer values.
             // Use Math.floor() for integer cast and rounding of X-Y values.
             // Leave Z as floating point for comparisons in z-buffer.
-            currentX = Math.floor(start[0]);
-            currentY = Math.floor(start[1]);
-            currentZ = start[2];
+            currX = Math.floor(st[0]);
+            currY = Math.floor(st[1]);
+            currZ = st[2];
 
             nextX = Math.floor(end[0]);
             nextY = Math.floor(end[1]);
-            nextZ = end[0];
+            nextZ = end[2];
 
-            const edgeStartVertexIndex = start;
+            const edgeStartVertexIndex = st;
             const edgeEndVertexIndex = end;
 
             // Set texture coordinate uv-vector/array of the current edge for later interpolation.
 
             drawLineBresenham(
-                currentX,
-                currentY,
-                currentZ,
+                currX,
+                currY,
+                currZ,
                 nextX,
                 nextY,
                 nextZ,
                 color,
                 true,
                 edgeStartVertexIndex,
-                edgeEndVertexIndex
+                edgeEndVertexIndex,
             );
 
             // Calculate current and save last derivative.
             lastDerivative = derivative;
-            derivative = calcDerivative(currentY, nextY);
+            derivative = calcDerivative(currY, nextY);
 
             // Skip horizontal edges.
             if (derivative === 0) {
@@ -379,7 +374,7 @@ define(["exports", "shader", "framebuffer", "data", "glMatrix"], function (
 
             if (derivative + lastDerivative === 0 && derivative !== 0) {
                 // Add start point if edges are non monotonous, Peek point.
-                addIntersection(currentX, currentY, currentZ);
+                addIntersection(currX, currY, currZ);
             }
 
             // If current derivative ==0 then keep the last one.
@@ -398,7 +393,7 @@ define(["exports", "shader", "framebuffer", "data", "glMatrix"], function (
     function interpolationPrepareScanline(
         startIntersection,
         endIntersection,
-        texture
+        texture,
     ) {
         // Start-point for filling on scanline.
         const xStartFill = startIntersection.x;
@@ -413,13 +408,13 @@ define(["exports", "shader", "framebuffer", "data", "glMatrix"], function (
         // To calculate dz.
         const deltaX = xEndFill - xStartFill;
 
-        // BEGIN exercise Z-Buffer (for interpolation of z)
+        //#region BEGIN exercise Z-Buffer (for interpolation of z)
 
         // Calculate dz for linear interpolation along a scanline.
 
-        // END exercise Z-Buffer
+        //#endregion END exercise Z-Buffer
 
-        // BEGIN exercise Shading
+        //#region BEGIN exercise Shading
 
         // Interpolation for shader.
         // Bi-linear interpolation. Alternatively use barycentric coordinates.
@@ -447,16 +442,16 @@ define(["exports", "shader", "framebuffer", "data", "glMatrix"], function (
         interpolationData.shaderPrepareScanline(
             interpolationData.vertexIndices,
             interpolationData.weights,
-            deltaX
+            deltaX,
         );
 
         // Variables for interpolation step on scanline.
         interpolationData.weightOnScanline = 0.0;
         interpolationData.deltaWeightOnScanline = 1.0 / (deltaX === 0 ? 1 : deltaX);
 
-        // END exercise Shading
+        //#endregion END exercise Shading
 
-        // BEGIN exercise Texture
+        //#region BEGIN exercise Texture
 
         // Reuse the weights calculated for shading.
 
@@ -481,7 +476,7 @@ define(["exports", "shader", "framebuffer", "data", "glMatrix"], function (
             // Starting value on scanline.
         }
 
-        // END exercise Texture
+        //#endregion END exercise Texture
     }
 
     /**
@@ -491,13 +486,13 @@ define(["exports", "shader", "framebuffer", "data", "glMatrix"], function (
      * @parameter texture: if not null do interpolate UV.
      */
     function interpolationStepOnScanline(texture) {
-        // BEGIN exercise Z-Buffer (for interpolation of z or plane equ)
+        //#region BEGIN exercise Z-Buffer (for interpolation of z or plane equ)
 
         // Calculate z for next pixel, i.e. apply dz step.
 
-        // END exercise Z-Buffer
+        //#endregion END exercise Z-Buffer
 
-        // BEGIN exercise Shading
+        //#region BEGIN exercise Shading
 
         // Step interpolation in shader.
         interpolationData.shaderStepOnScanline();
@@ -519,7 +514,7 @@ define(["exports", "shader", "framebuffer", "data", "glMatrix"], function (
             // interpolationData.uvVec[1] += interpolationData.uvVecDelta[1];
         }
 
-        // END exercise Texture
+        //#endregion END exercise Texture
     }
 
     /**
@@ -543,7 +538,7 @@ define(["exports", "shader", "framebuffer", "data", "glMatrix"], function (
         color,
         textureCoord,
         polygonTextureCoord,
-        texture
+        texture,
     ) {
         let horizontalClippingTest;
         let zTest;
@@ -555,7 +550,7 @@ define(["exports", "shader", "framebuffer", "data", "glMatrix"], function (
             color,
             textureCoord,
             polygonTextureCoord,
-            texture
+            texture,
         );
 
         // Use the shader/shading-function that is set for this polygon.
@@ -569,42 +564,41 @@ define(["exports", "shader", "framebuffer", "data", "glMatrix"], function (
         interpolationData.shaderStepOnScanline =
             shader.getInterpolationStepOnScanlineFunction();
 
-        // BEGIN exercise Scanline
+        //#region BEGIN exercise Scanline
 
         // Fill polygon line by line using the scanline algorithm.
         // Loop over non empty scan lines.
         for (var i = 0; i < scanlineIntersection.length; i++) {
             if (scanlineIntersection[i] === undefined) continue; //No points on this line
             if (scanlineIntersection[i].length % 2 !== 0) continue;
-            if (scanlineIntersection[i].length === 2) {
-                var sorted = scanlineIntersection[i].sort((a, b) => a.x - b.x);
-                const minX = sorted[0].x;
-                const maxX = sorted[sorted.length - 1].x;
-                drawLineBresenham(minX, i, 0, maxX, i, 0, data.getColorByName("blue"));
-            } else {
-                var sorted = scanlineIntersection[i].sort((a, b) => a.x - b.x);
 
-                findPairs(sorted).map((pair) => {
-                    drawLineBresenham(
-                        pair.minX,
-                        i,
-                        0,
-                        pair.maxX,
-                        i,
-                        0,
-                        data.getColorByName("blue")
-                    );
-                });
+            const sorted = scanlineIntersection[i].sort((a, b) => a.x - b.x);
+            if (sorted.length > 10) {
+                //   debugger;
             }
+            findPairs(sorted).map((pair) => {
+                drawLineBresenham(
+                    pair.minX,
+                    i,
+                    pair.startZ,
+                    pair.maxX,
+                    i,
+                    pair.endZ,
+                    color,
+                    true,
+                );
+            });
         }
 
         function findPairs(arr) {
             const res = [];
 
+            // debugger;
             if (arr.length > 4) {
             }
             for (let i = 0; i < arr.length;) {
                 const startX = arr[i].x;
+                const startZ = arr[i].z;
                 let currX = startX;
                 let offset = 0;
                 if (arr[i + 1].x !== currX + 1) {
@@ -618,13 +612,15 @@ define(["exports", "shader", "framebuffer", "data", "glMatrix"], function (
                 res.push({
                     minX: startX,
                     maxX: arr[i + offset].x,
+                    startZ: startZ,
+                    endZ: arr[i + offset].z,
                 });
                 i += offset + 1;
             }
             return res;
         }
 
-        // END exercise Scanline
+        //#endregion END exercise Scanline
     }
 
     /**
@@ -712,7 +708,16 @@ define(["exports", "shader", "framebuffer", "data", "glMatrix"], function (
      * @parameter [only for textureing] edgeStartTextureCoord,
      *  edgeEndTextureCoord : Texture uv-vectors (not the indices) for edge currently processed.
      */
-    function addIntersection(x, y, z, interpolationWeight, edgeStartVertexIndex, edgeEndVertexIndex, edgeStartTextureCoord, edgeEndTextureCoord) {
+    function addIntersection(
+        x,
+        y,
+        z,
+        interpolationWeight,
+        edgeStartVertexIndex,
+        edgeEndVertexIndex,
+        edgeStartTextureCoord,
+        edgeEndTextureCoord,
+    ) {
         // Do some hacked  (vertical) clipping.
         // Points out of y-range are on no scanline and can be ignored.
         // Horizontal clipping is done in scanline to ensure correct interpolation.
@@ -764,20 +769,6 @@ define(["exports", "shader", "framebuffer", "data", "glMatrix"], function (
         //}
 
         return z;
-    }
-
-    /**
-     * For Debug
-     */
-    function drawLine(startX, startY, endX, endY, color) {
-        const colorname = Object.keys(color)[0];
-        ctx.fillStyle = colorname;
-        ctx.strokeStyle = colorname;
-        ctx.beginPath();
-        ctx.moveTo(startX, startY);
-        ctx.lineTo(endX, endY);
-        //ctx.closePath();
-        ctx.stroke();
     }
 
     // Public API.

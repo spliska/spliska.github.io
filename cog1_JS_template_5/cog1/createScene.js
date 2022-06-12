@@ -20,15 +20,16 @@ define(["exports", "scenegraph", "animation"], function (
 	 *
 	 */
 	function init() {
-		var insideOutPoly = scenegraph.createNodeWithModel("insideOutPoly", "insideOutPoly");
 
-		// BEGIN exercise myModel
-        //var myModel=scenegraph.createNodeWithModel("myModel","myModel");
-		// END exercise myModel
+		var cubeNode4 = scenegraph.createNodeWithModel(
+			"cube six faces texture",
+			"cube",
+			{ scale: 200, textureURL: "OrbitCube.gif", sixFacesTexture: true }
+		);
 
 		return;
 
-		//var cubeNode = scenegraph.createNodeWithModel("cube", "cube", {scale:100, textureURL:"brickWall.jpg"});
+		var cubeNode = scenegraph.createNodeWithModel("cube", "cube", {scale:100, textureURL:"brickWall.jpg"});
 		var cubeNode1 = scenegraph.createNodeWithModel("cube 1", "cube", {
 			scale: 70,
 			textureURL: "stoneWall.jpg",

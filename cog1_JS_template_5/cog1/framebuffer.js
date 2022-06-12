@@ -90,9 +90,8 @@ define(["exports", "scene"], function(exports, scene) {
 		// Initialize the zBuffer.
 		zBufSize = width * height;
 		zBuf = new Float32Array(zBufSize);
-
 		initResetBuffer();
-		
+
 		// Reset to initialize framebuffer and z-buffer.
 		setMaxDirtyRect();
 		reset();
@@ -128,24 +127,28 @@ define(["exports", "scene"], function(exports, scene) {
 
 		// BEGIN exercise Z-Buffer
 
-
 		// Z-Buffer pixel starts a frame as undefined.
 		// The first access on a pixel does not need a test.
+		if (zBuf[indexZBuf] == undefined) {
+			zBuf[indexZBuf] = z;
+			return true;
+		}
+		// On z-buffer fights color black should win to emphasize debug edges.
+		// Use some small epsilon to determine z-buffer fights
+		// in favor of the the polygon processed first or last (depending on sign).
+		// Epsilon depends on the z-range of the scene.
+		if (zBuf[indexZBuf] < z + 1000) {
+			//console.log(z);
+			// console.log("dz: " + Math.abs(zBuf[indexZBuf]) - Math.abs(z));
+			zBuf[indexZBuf] = z;
+			return true;
+		}
+		return false;
+		// Guess some decent epsilon (which may be >1 despite the name).
 
-			// On z-buffer fights color black should win to emphasize debug edges.
-			// Use some small epsilon to determine z-buffer fights
-			// in favor of the the polygon processed first or last (depending on sign).
-			// Epsilon depends on the z-range of the scene.
-
-				// Guess some decent epsilon (which may be >1 despite the name).
-
-			// The camera is in the origin looking in negative z-direction.
-
+		// The camera is in the origin looking in negative z-direction.
 
 		// END exercise Z-Buffer
-
-
-		return true;
 	}
 
 	/**
@@ -158,7 +161,7 @@ define(["exports", "scene"], function(exports, scene) {
 	 * @parameter adjustDirtyRect is done per default if not given.
 	 */
 	function set(x, y, z, color, doZBufferTest, adjustDirtyRect) {
-		
+
 
 		// Check range could be done in raster.
 		// It is done here to cover (horizontal) clipping artifacts.
@@ -237,7 +240,7 @@ define(["exports", "scene"], function(exports, scene) {
 	 * Reset framebuffer and z-buffer.
 	 * Called before every frame or to clear.
 	 * Values are reset by copying buffers.
-	 *  @returns clearect object, i.e., the last dirty rect to be cleared in scene. 
+	 *  @returns clearect object, i.e., the last dirty rect to be cleared in scene.
 	 *  or null if nothing is to be cleared.
 	 */
 	function reset() {
@@ -247,10 +250,10 @@ define(["exports", "scene"], function(exports, scene) {
 		var dirtyWidth;
 		var dirtyData, dirtyDataReset;
 		// Return null if nothing is to be cleared on the canvas.
-		var clearrect = null; 
+		var clearrect = null;
 
 
-		// Check if there was anything drawn. 
+		// Check if there was anything drawn.
 		if(dirtyEndIndex > dirtyStartIndex) {
 			// Dirty width in 4 bytes.
 			dirtyWidth = dirtyEndIndex - dirtyStartIndex;
@@ -292,12 +295,12 @@ define(["exports", "scene"], function(exports, scene) {
                 y : dirtyRect.y,
                 // Add 1 to include the max edge.
                 w : dirtyRect.xMax - dirtyRect.x + 1,
-                h : dirtyRect.yMax - dirtyRect.y + 1               
-            }; 
+                h : dirtyRect.yMax - dirtyRect.y + 1
+            };
         }
 
 		resetDirtyRect();
-		
+
 		return clearRect
 	}
 
@@ -320,7 +323,7 @@ define(["exports", "scene"], function(exports, scene) {
 			dirtyRect.width++;
 			dirtyRect.height++;
 		}
-		
+
 		//console.log("dirtyRect x y w h  " + dirtyRect.x + " " + dirtyRect.y + " " + dirtyRect.width + " " + dirtyRect.height);
 		ctx.putImageData(imageData, 0, 0, dirtyRect.x, dirtyRect.y, dirtyRect.width, dirtyRect.height);
 	}

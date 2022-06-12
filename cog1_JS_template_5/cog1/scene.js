@@ -413,8 +413,8 @@ define([
 			// Prepare the data of polygon p to pass to scanline.
 			var polygon = polygons[p];
 			var normal = polygonNormals[p];
-			// var color = modelData.colors[modelData.polygonColors[p]];
-			var color = modelData.colors[1];
+			 var color = modelData.colors[modelData.polygonColors[p]];
+			//var color = modelData.colors[1];
 
 			if (texture != null) {
 				var polygonTextureCoord = modelData.polygonTextureCoord[p];

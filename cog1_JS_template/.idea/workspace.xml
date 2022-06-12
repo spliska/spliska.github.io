@@ -1,50 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="e1f7ef25-8939-49b8-824a-ef93ef003e18" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../avocado/.idea/$PRODUCT_WORKSPACE_FILE$" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../avocado/.idea/libraries" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../avocado/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../avocado/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../avocado/.idea/workspace.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../avocado/assets/AvocadoMoodboard.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../avocado/assets/AvocadoStyled.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../avocado/assets/AvocadoStyled.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../avocado/assets/BettercadoAnimation.gif" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../avocado/assets/Collage.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../avocado/assets/CollageShadow.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../avocado/assets/DSC_0040.JPG" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../avocado/assets/DSC_0047.JPG" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../avocado/assets/DSC_0062.JPG" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../avocado/assets/DSC_0067.JPG" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../avocado/assets/DSC_0077.JPG" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../avocado/assets/DSC_0131.JPG" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../avocado/assets/DSC_0144.JPG" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../avocado/assets/PSWDefault.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../avocado/assets/PSWMixer.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../avocado/assets/SC_015_changed.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../avocado/assets/VIsitenkarteVorder.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../avocado/assets/VisitenkarteHinter.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../avocado/assets/apple-appstore_logo.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../avocado/assets/google-play-store-logo.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../avocado/assets/moustache-1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../avocado/assets/sky.jpeg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../avocado/assets/smile.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../avocado/avocado.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../avocado/avocado.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../avocado/avocado.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../avocado/barchart.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../avocado/data.tsv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../avocado/donutChart.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../avocado/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../avocado/slideshow.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../avocado/slideshowTwo.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../avocado/slideshowfour.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../avocado/slideshowthree.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cog1_JS_template_2/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../cog1_JS_template_2/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../cog1_JS_template_3/cog1/raster.js" beforeDir="false" afterPath="$PROJECT_DIR$/../cog1_JS_template_3/cog1/raster.js" afterDir="false" />
-    </list>
+    <list default="true" id="e1f7ef25-8939-49b8-824a-ef93ef003e18" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -100,7 +57,7 @@
       <workItem from="1650862196292" duration="339000" />
       <workItem from="1652028883937" duration="3806000" />
       <workItem from="1653234355416" duration="101000" />
-      <workItem from="1653240828914" duration="633000" />
+      <workItem from="1653240828914" duration="634000" />
     </task>
     <servers />
   </component>
