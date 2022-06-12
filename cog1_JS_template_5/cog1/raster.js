@@ -170,7 +170,7 @@ define(["exports", "shader", "framebuffer", "data", "glMatrix"], function (
 
         // Skip it, if the line is just a point.
         if (startX === endX && startY === endY) {
-            framebuffer.set(x, y, startZ, color,false);
+            framebuffer.set(x, y, startZ, color, false);
             return;
         }
 
@@ -179,7 +179,7 @@ define(["exports", "shader", "framebuffer", "data", "glMatrix"], function (
         // In any case, do not add an intersection for start point here,
         // this should happen later in the scanline function.
 
-        framebuffer.set(x, y, startZ, color,false);
+        framebuffer.set(x, y, startZ, color, false);
 
         // Distinction of cases for driving variable.
         if (dXAbs >= dYAbs) {
@@ -215,7 +215,7 @@ define(["exports", "shader", "framebuffer", "data", "glMatrix"], function (
                         edgeEndTextureCoord,
                     );
                 }
-                framebuffer.set(x, y, currentZ, color,false);
+                framebuffer.set(x, y, currentZ, color, false);
 
                 previousY = y;
                 currentZ += dz;
@@ -245,7 +245,7 @@ define(["exports", "shader", "framebuffer", "data", "glMatrix"], function (
                         edgeEndTextureCoord,
                     );
                 }
-                framebuffer.set(x, y, currentZ, color,false);
+                framebuffer.set(x, y, currentZ, color, false);
                 currentZ += dz;
             }
         }
@@ -573,9 +573,7 @@ define(["exports", "shader", "framebuffer", "data", "glMatrix"], function (
             if (scanlineIntersection[i].length % 2 !== 0) continue;
 
             const sorted = scanlineIntersection[i].sort((a, b) => a.x - b.x);
-            if (sorted.length > 10) {
-                //   debugger;
-            }
+            
             findPairs(sorted).map((pair) => {
                 drawLineBresenham(
                     pair.minX,

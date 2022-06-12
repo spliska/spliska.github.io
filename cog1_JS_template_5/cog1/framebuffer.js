@@ -138,8 +138,8 @@ define(["exports", "scene"], function(exports, scene) {
 		// in favor of the the polygon processed first or last (depending on sign).
 		// Epsilon depends on the z-range of the scene.
 		if (zBuf[indexZBuf] < z + 1000) {
-			//console.log(z);
-			// console.log("dz: " + Math.abs(zBuf[indexZBuf]) - Math.abs(z));
+			 console.log(z);
+			 console.log("dz: " + Math.abs(zBuf[indexZBuf]) - Math.abs(z));
 			zBuf[indexZBuf] = z;
 			return true;
 		}
