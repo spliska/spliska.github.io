@@ -6,15 +6,50 @@
  */
 require(["dojo", "dojo/parser", "dojo/domReady!"], function (dojo) {
   "use strict";
+
+  // Check the dojo version.
+  //alert("Dojo version " + dojo.version + " is loaded" + '\n\ndojoConfig = '+ dojo.toJson(dojo.config, true));
+
+  // Reconfigure the loader at runtime by passing
+  // require a configuration object as the first parameter.
   require({
     async: true,
     parseOnLoad: true,
     debug: true,
     cacheBust: new Date(),
     waitSeconds: 5,
+
+    packages: [
+      // {
+      //   name: "dojo",
+      //   location: `${window.location.href.replace(
+      //     "index.html",
+      //     ""
+      //   )}/lib/dojo-release-1.16.4/dojo`,
+      // },
+      // {
+      //   name: "dijit",
+      //   location: `${window.location.href.replace(
+      //     "index.html",
+      //     ""
+      //   )}/lib/dojo-release-1.16.4/dijit`,
+      // },
+    ],
+    // If the local path to dojo is kept, we can set an absolute path to
+    // the cog1 project instead.
     paths: {
-      "cog1": "/cog1/8"
+      // Absolute path to cog1 project, local directory without
+      // HTTP-server:
+      // "cog1" : "/Users/felixgers/BHT/src/cog1/cog1_JS_template/cog1"
+      //"cog1" : "/Users/felixgers/BHT/src/cog1/cog1_JS_template/cog1"
+      //"cog1" : "/home/felix/BHT/src/cog1/cog1_JS_template/cog1"
+      // "cog1" : "file:///U:/BHT/src/cog1/cog1_JS_template"
+      // On same [maybe local] HTTP-server as used to load dojo:
+      "cog1": "/cog1_JS_template_8/cog1"
+      // "cog1" : "/~gers/cog1_sol/cog1"
     },
+    // Add one entry for each custom module.
+    // This is, among others, necessary to apply the path parameter.
     aliases: [
       ["app", "cog1/app"],
       ["layout", "cog1/layout"],
@@ -29,9 +64,11 @@ require(["dojo", "dojo/parser", "dojo/domReady!"], function (dojo) {
       ["framebuffer", "cog1/framebuffer"],
       ["texture", "cog1/texture"],
       ["animation", "cog1/animation"],
+      // Template data for models (other models are not aliased here)
       ["data", "cog1/data"],
-      ["glMatrix", "ext/glMatrix.js"]
-    ]
+      // external (ext)
+      ["glMatrix", "cog1/ext/glMatrix.js"],
+    ],
   });
 
   // Load the framework with the re-configured parameters.

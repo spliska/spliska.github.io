@@ -19,8 +19,8 @@
  * 0      a     2
  *
  * Parameter:
- * 	recursionDepth
- * 	color or -1 = many colors
+ *  recursionDepth
+ *  color or -1 = many colors
  *
  * For texture see:
  * http://earthobservatory.nasa.gov/Features/BlueMarble/
@@ -29,160 +29,191 @@
  * @module sphere
  */
 
-define(["exports", "data", "glMatrix"], function(exports, data) {
-	"use strict";
+define(["exports", "data", "glMatrix"], function (exports, data) {
+  "use strict";
 
-	/**
-	 * Procedural calculation.
-	 *
-	 * @parameter object with fields:
-	 * @parameter scale
-	 * @parameter recursionDepth
-	 * @parameter color [-1 for many colors]
-	 */
-	exports.create = function(parameter) {
-				
-		if(parameter) {
-			var scale = parameter.scale;
-			var recursionDepth = parameter.recursionDepth;
-			var color = parameter.color;
-			var textureURL = parameter.textureURL;
-		}
-		// Set default values if parameter is undefined.
-		if(scale == undefined) {
-			scale = 250;
-		}
-		if(recursionDepth == undefined) {
-			recursionDepth = 3;
-		}
-		if(color == undefined) {
-			color = 9;
-		}
-		if(textureURL == undefined) {
-			textureURL = "";
-		}
+  /**
+   * Procedural calculation.
+   *
+   * @parameter object with fields:
+   * @parameter scale
+   * @parameter recursionDepth
+   * @parameter color [-1 for many colors]
+   */
+  exports.create = function (parameter) {
 
-		// Instance of the model to be returned.
-		var instance = {};
+    if (parameter) {
+      var scale = parameter.scale;
+      var recursionDepth = parameter.recursionDepth;
+      var color = parameter.color;
+      var textureURL = parameter.textureURL;
+    }
+    // Set default values if parameter is undefined.
+    if (scale === undefined) {
+      scale = 250;
+    }
+    if (recursionDepth === undefined) {
+      recursionDepth = 3;
+    }
+    if (color === undefined) {
+      color = 9;
+    }
+    if (textureURL === undefined) {
+      textureURL = "";
+    }
 
-		// BEGIN exercise Sphere
+    // Instance of the model to be returned.
+    var instance = {};
 
-		// Starting with octahedron vertices
+    // BEGIN exercise Sphere
 
-		// octahedron triangles
+    // Starting with octahedron vertices
+    // octahedron triangles
 
-		devide_all.call(instance, recursionDepth);
+    const details = 1;
 
-		// END exercise Sphere
-		
-		devide_all.call(instance, recursionDepth);
+    instance.vertices = [
+      [0, 1, 0],
+      [1, 0, 0],
+      [0, 0, -1],
+      [-1, 0, 0],
+      [0, 0, 1],
+      [0, -1, 0],
+    ];
 
-		generateTextureCoordinates.call(instance);
+    instance.polygonVertices = [
+      [0, 4, 1],
+      [0, 1, 2],
+      [0, 2, 3],
+      [0, 3, 4],
 
-		data.applyScale.call(instance, scale);
-		data.setColorForAllPolygons.call(instance, color);
+      [5, 4, 1],
+      [5, 1, 2],
+      [5, 2, 3],
+      [5, 3, 4],
+    ];
+    // END exercise Sphere
 
-		instance.textureURL = textureURL;
+    const centerOfTwoVertices = (a, b) => {
 
-		return instance;
-	}
-	/**
-	 * Called with this pointer set to instance.
-	 * Generate texture coordinates one per each corner of a polygon,
-	 * thus a vertex can have more than one uv, depending on the polygon it is part of.
-	 * The coordinates u.v represent the angles theta and phi
-	 * of point vector to x and y axis.
-	 * See:
-	 * http://tpreclik.dyndns.org/codeblog/?p=9
-	 *
-	 * Assume that vertices are not yet scaled, thus have length 1.
-	 *
-	 */
-	function generateTextureCoordinates() {
+    }
 
-		// BEGIN exercise Sphere-Earth-Texture
+    devide_all.call(instance, recursionDepth);
 
-		// As there is not exactly one texture coordinate per vertex,
-		// we have to install a different mapping as used for polygonVertices to vertices.
-		// For texture coordinate system use openGL standard, where origin is bottom-left.
-		this.textureCoord = [];
-		this.polygonTextureCoord = [];
+    generateTextureCoordinates.call(instance);
 
+    data.applyScale.call(instance, scale);
+    data.setColorForAllPolygons.call(instance, color);
 
-			// Loop over vertices/edges in polygon.
+    instance.textureURL = textureURL;
 
-				// Shorthands for the current vertex.
+    return instance;
+  }
 
+  /**
+   * Called with this pointer set to instance.
+   * Generate texture coordinates one per each corner of a polygon,
+   * thus a vertex can have more than one uv, depending on the polygon it is part of.
+   * The coordinates u.v represent the angles theta and phi
+   * of point vector to x and y axis.
+   * See:
+   * http://tpreclik.dyndns.org/codeblog/?p=9
+   *
+   * Assume that vertices are not yet scaled, thus have length 1.
+   *
+   */
+  function generateTextureCoordinates() {
 
-				// Calculate longitude (east-west position) phi (u-coordinate).
-				// arctangent (of here z/x), representing the angle theta between the positive X axis, and the point.
-				// Scale phi to uv range [0,1].
+    // BEGIN exercise Sphere-Earth-Texture
 
-
-				// Calculate latitude (north-south position) theta (v-coordinate) from y component of vertex.
-				// Scale theta to uv range [0,1].
+    // As there is not exactly one texture coordinate per vertex,
+    // we have to install a different mapping as used for polygonVertices to vertices.
+    // For texture coordinate system use openGL standard, where origin is bottom-left.
+    this.textureCoord = [];
+    this.polygonTextureCoord = [];
 
 
-				// Store new uv coordinate in new uv-vector.
-				//console.log("phi:" + (~~(phi * 100)) + "  theta:" + (~~(theta * 100)) + " x:" + (~~(x * 100)) + " z:" + (~~(z * 100)));
-				
+    // Loop over vertices/edges in polygon.
 
-		// Problem with phi/u: phi=360 and phi=0 are the same point in 3D and also on a tiled texture.
-		// But for faces it is a difference if uv-range is 350¡-360¡ [.9-1]or 350¡-0¡ [.9-0].
-		// Thus, insert a check/hack (assuming faces cover only a small part of the texture):
+    // Shorthands for the current vertex.
 
-			// Check if u-range should be low or high (left or right in texture),
-			// by summing up u values (ignoring u=0 values).
 
-			// Check and correct u values if 0;
-		
-		// END exercise Sphere-Earth-Texture
-	}
+    // Calculate longitude (east-west position) phi (u-coordinate).
+    // arctangent (of here z/x), representing the angle theta between the positive X axis, and the point.
+    // Scale phi to uv range [0,1].
 
-	// BEGIN exercise Sphere
 
-	/**
-	 * Recursively divide all triangles.
-	 */
-	function devide_all(recursionDepth, nbRecusions) {
-		// nbRecusions is not set from initial call.
-		if(nbRecusions == undefined) {
-			nbRecusions = 0;
-		}
-		// Stop criterion.
+    // Calculate latitude (north-south position) theta (v-coordinate) from y component of vertex.
+    // Scale theta to uv range [0,1].
 
-		//console.log("nbRecusions: "+nbRecusions);
-		// Assemble divided polygons in an new array.
 
-			// Indices of the last three new vertices.
+    // Store new uv coordinate in new uv-vector.
+    //console.log("phi:" + (~~(phi * 100)) + "  theta:" + (~~(theta * 100)) + " x:" + (~~(x * 100)) + " z:" + (~~(z * 100)));
 
-				// Calculate new vertex in the middle of edge.
 
-				// Check if the new vertex exists already.
-				// This happens because edges always belong to two triangles.
+    // Problem with phi/u: phi=360 and phi=0 are the same point in 3D and also on a tiled texture.
+    // But for faces it is a difference if uv-range is 350ï¿½-360ï¿½ [.9-1]or 350ï¿½-0ï¿½ [.9-0].
+    // Thus, insert a check/hack (assuming faces cover only a small part of the texture):
 
-					// Remember index of new vertex.
+    // Check if u-range should be low or high (left or right in texture),
+    // by summing up u values (ignoring u=0 values).
 
-					//console.log("Calculate new vertex "+v+"->"+newIndex[v]+" : "+vertices[p[v]]+" + "+ vertices[p[next]]+" = "+ newVertex);
+    // Check and correct u values if 0;
 
-					// Use the existing vertex for the new polygon.
+    // END exercise Sphere-Earth-Texture
+  }
 
-					//console.log("New vertex exists "+v+"->"+newIndex[v]+" : "+this.vertices[p[v]]+" + "+ this.vertices[p[next]]+" = "+ newVertex);
+  // BEGIN exercise Sphere
 
-			// Assemble new polygons.
-			// Assure mathematical positive order to keep normals pointing outwards.
-			// Triangle in the center.
+  /**
+   * Recursively divide all triangles.
+   */
+  function devide_all(recursionDepth, nbRecusions) {
+    // nbRecusions is not set from initial call.
+    if (nbRecusions === undefined) {
+      nbRecusions = 0;
+    }
+    // Stop criterion.
+    if (nbRecusions === recursionDepth) {
+      return;
+    }
 
-			// Triangle in the corners.
+    const newPolygon = [];
+    for (let vertex of this.polygonVertices) {
+      // get points of triangle
+      const p0 = vertex[0];
+      const p1 = vertex[1];
+      const p2 = vertex[2];
 
-				//console.log("Assemble new polygons "+v+" : "+p[v]+" , "+ newIndex[nextButOne]+" , "+ newIndex[v]);
+      //get vectors
+      const v0 = this.vertices[p0];
+      const v1 = this.vertices[p1];
+      const v2 = this.vertices[p2];
 
-		// Swap result.
+      //create new vectors
+      const aMul = v0.map((v, index) => (v + v2[index])/2);
+      const bMul = v0.map((v, index) => (v + v1[index])/2);
+      const cMul = v1.map((v, index) => (v + v2[index])/2);
 
-		// Recursion.
+      // normalize
+      const vecNorm = (v) => v.map(el => el / Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]));
 
-	}
-	
-	// END exercise Sphere
+      const aN = vecNorm(aMul);
+      const bN = vecNorm(bMul);
+      const cN = vecNorm(cMul);
+
+      //get new indices for vertices
+      const i = this.vertices.length;
+      this.vertices.push(aN, bN, cN);
+
+      // construct new Polygon (triangle)
+      newPolygon.push([p0, i + 1, i], [i + 1, p1, i + 2], [i, i + 1, i + 2], [i, i + 2, p2]);
+    }
+    this.polygonVertices = newPolygon;
+    // Recursion.
+    devide_all.call(this, recursionDepth, nbRecusions + 1);
+  }
+
+  // END exercise Sphere
 
 });
