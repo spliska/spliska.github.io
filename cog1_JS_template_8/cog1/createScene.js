@@ -37,6 +37,7 @@ function(exports, scenegraph, animation) {
 		var cubeNode4 = scenegraph.createNodeWithModel("cube six faces texture", "cube", {scale:200, textureURL:"OrbitCube.gif", sixFacesTexture:true});
 		var cubeNode5 = scenegraph.createNodeWithModel("cube 3x3 texture", "cube", {scale:50, textureURL:"cubeColor.png", sixFacesTexture:true});
 		var cubeNode6 = scenegraph.createNodeWithModel("cube Escher texture", "cube", {scale:200, textureURL:"EscherCubeFish.gif", sixFacesTexture:true});
+		var sphere = scenegraph.createNodeWithModel("sphere", "sphere", { scale: 250, recursionDepth: 3 });
 		
 		var insideOutPolyNode = scenegraph.createNodeWithModel("insideOutPoly", "insideOutPoly");
 
@@ -84,10 +85,11 @@ function(exports, scenegraph, animation) {
         cubeNode1.setVisible(false);
         cubeNode2.setVisible(false);
         cubeNode3.setVisible(false);
-        cubeNode4.setVisible(true);
+        cubeNode4.setVisible(false);
         cubeNode5.setVisible(false);
         cubeNode6.setVisible(false);
-        insideOutPolyNode.setVisible(false);
+				sphere.setVisible(true);
+				insideOutPolyNode.setVisible(false);
         diamondNode.setVisible(false);
         torusNode.setVisible(false);
         torusNode1.setVisible(false);

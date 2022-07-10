@@ -394,21 +394,16 @@ define(["exports", "data", "glMatrix"], function(data, exports) {
 		}
 
 		// BEGIN exercise Vertex-Normals
+
+		// Initialize normal array.
 		// Loop over polygons.
-		for (let vIndex = 0; vIndex < this.polygonVertices.length; vIndex++) {
-			// Loop over vertices of polygon.
-			for (let polygon of this.polygonVertices[vIndex]) {
-				// Accumulate/add all polygon normals.
-				if (polygon < this.vertexNormals.length) {
-					vec3.add(this.vertexNormals[polygon], this.polygonNormals[vIndex]);
-				}
-			}
-		}
+
+		// Loop over vertices of polygon.
+
+		// Accumulate/add all polygon normals.
 
 		// Normalize normals.
-		for (let vertexNormal of this.vertexNormals) {
-			vec3.normalize(vertexNormal);
-		}
+
 		// END exercise Vertex-Normals
 	}
 
@@ -426,7 +421,7 @@ define(["exports", "data", "glMatrix"], function(data, exports) {
 	 */
 	function calculateNormalForPolygon(vertices, polygon, n){
 
-		if(n === null){
+		if(n == null){
 			console.log("Error: Parameter normal n is null.");
 		}
 
@@ -434,29 +429,25 @@ define(["exports", "data", "glMatrix"], function(data, exports) {
 		// BEGIN exercise Vertex-Normals
 
 		// Two edge-vectors dim 3:
+
 		// Check for polygon vertex exist (common index error in data).
-		if (polygon.length < 3) {
-			return [0, 0, 0];
-		}
+
+		// We do not use the matrix lib here.
 
 		// Calculate normal vector from vector product of edges.
-		const u = vec3.create(vertices[polygon[0]]);
-
-		const v = vec3.subtract(vec3.create(vertices[polygon[1]]), u);
-		const w = vec3.subtract(vec3.create(vertices[polygon[2]]), u);
-
-		// cross product
-		n = vec3.cross(v, w, n);
 
 		// Check that e[u] are not parallel.
-		// if values of vector n = 0, then v1||v2
-		if (n[0] === 0 && n[1] === 0 && n[2] === 0) {
-			return [0, 0, 0];
-		}
+
+		// Normal exist, otherwise try next edges.
+
+		// Set null-vector (alternative: positive z-direction) as default.
 
 		// Normalize n, ignoring w.
 		// We do this by hand as the length is already calculated.
-		return vec3.normalize(n);
+
+
+		// Only  for template, comment this out for solution.
+		return 1;
 
 		// END exercise Vertex-Normals
 		// END exercise Z-Buffer
